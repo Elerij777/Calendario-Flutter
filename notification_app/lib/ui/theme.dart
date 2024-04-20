@@ -29,7 +29,16 @@ class Themes {
 TextStyle get subHeadingStyle {
   return GoogleFonts.lato(
     textStyle: const TextStyle(
-      fontSize: 24, fontWeight:FontWeight.bold
+      fontSize: 24, 
+      fontWeight:FontWeight.bold
+    )
+  );
+}
+TextStyle get headingStyle {
+  return GoogleFonts.lato(
+    textStyle: const TextStyle(
+      fontSize: 30, 
+      fontWeight:FontWeight.bold
     )
   );
 }
