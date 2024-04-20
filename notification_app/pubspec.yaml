@@ -39,6 +39,7 @@ dependencies:
   get:
   intl:
   date_picker_timeline: ^1.0.0
+  sqflite:
   google_fonts:
   flutter_local_notifications:
   flutter_localizations:

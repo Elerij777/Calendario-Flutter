@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:notification_app/ui/services/notification_services.dart';
 import 'package:notification_app/ui/services/theme_services.dart';
 import 'package:notification_app/ui/theme.dart';
+import 'package:notification_app/ui/widgets/add_task_bar.dart';
 import 'package:notification_app/ui/widgets/custome_buttom.dart';
 
 //import 'package:notification_app/ui/theme.dart';
@@ -36,6 +37,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _appBar(),
+      backgroundColor: context.theme.colorScheme.background,
       body: Column(
         children: [
           Row(
@@ -75,7 +77,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                       CustomButton(
                         text: '+ Agregar Tarea',
-                        onTap: () => null,
+                        onTap: () => Get.to(const AddTaskPage()),
                       ),
                     ],
                   ),
@@ -83,6 +85,8 @@ class _HomePageState extends State<HomePage> {
               ),
             ],
           ),
+/*
+//2 calendario extenso
           Localizations.override(
             context: context,
             locale: const Locale('es'),
@@ -97,29 +101,47 @@ class _HomePageState extends State<HomePage> {
               },
             ),
           ),
+*/
           _addTaskBar(),
-          Container(
-            margin: const EdgeInsets.only(top: 20.0, bottom: 20.0),
-            child: DatePicker(
-              DateTime.now(),
-              height: 100,
-              width: 80,
-              initialSelectedDate: DateTime.now(),
-              selectionColor: primaryClr,
-              selectedTextColor: Colors.white,
-              dayTextStyle: const TextStyle(
-                fontFamily: 'Lato',
-              ),
-              dateTextStyle: const TextStyle(
-                fontFamily: 'Lato',
-                fontSize: 20,
-                fontWeight: FontWeight.w600,
-                color: Colors.grey,
-              ),
-              locale: 'es', // Establecer el idioma a español
-            ),
-          ),
+          _addDateBar(),
         ],
+      ),
+    );
+  }
+
+//calendario
+  _addDateBar() {
+    //calendario del video
+    return Container(
+      margin: const EdgeInsets.only(top: 20.0, left: 5, bottom: 20.0),
+      child: DatePicker(
+        DateTime.now(),
+        height: 100,
+        width: 80,
+        initialSelectedDate: DateTime.now(),
+        selectionColor: primaryClr,
+        selectedTextColor: Colors.white,
+        //dia
+        dayTextStyle: const TextStyle(
+          fontFamily: 'Lato',
+        ),
+        //fecha
+        dateTextStyle: const TextStyle(
+          fontFamily: 'Lato',
+          fontSize: 20,
+          fontWeight: FontWeight.w600,
+          color: Colors.grey,
+        ),
+        //mes
+        monthTextStyle: const TextStyle(
+          fontFamily: 'Lato',
+          fontSize: 14,
+          fontWeight: FontWeight.w600,
+          color: Colors.grey,
+        ),
+        locale: 'es', // Establecer el idioma a español
+        onDateChange: (date) {
+        },
       ),
     );
   }
@@ -128,6 +150,7 @@ class _HomePageState extends State<HomePage> {
     return Container();
   }
 
+//parte superior de la app
   _appBar() {
     return AppBar(
       elevation: 0,
