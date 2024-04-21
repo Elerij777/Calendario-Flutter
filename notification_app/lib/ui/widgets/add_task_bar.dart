@@ -213,21 +213,48 @@ class _AddTaskPageState extends State<AddTaskPage> {
   }
 
   _validate() {
+    DateTime now = DateTime.now();
+    DateTime selectedDateTime = _selectedDate.add(Duration(
+        hours: int.parse(_starTime.split(":")[0]),
+        minutes: int.parse(_starTime.split(":")[1].split(" ")[0])));
+    DateTime endDateTime = _selectedDate.add(Duration(
+        hours: int.parse(_endTime.split(":")[0]),
+        minutes: int.parse(_endTime.split(":")[1].split(" ")[0])));
+
     if (_titleController.text.isNotEmpty &&
         _noteControlles.text.isNotEmpty &&
-        _selectedDate != null &&
         _starTime.isNotEmpty &&
         _endTime.isNotEmpty) {
-      _addTaskToDb();
-      Get.back();
-      Get.snackbar(
-        "Listo",
-        "Tarea agregada exitosamente ",
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.greenAccent,
-        colorText: Colors.white,
-        icon: const Icon(Icons.done, color: Colors.white),
-      );
+      if (selectedDateTime.isBefore(now)) {
+        Get.snackbar(
+          "Error",
+          "La fecha y hora de inicio deben ser posteriores a la fecha y hora actual",
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.redAccent,
+          colorText: Colors.white,
+          icon: Icon(Icons.warning_amber_rounded, color: Colors.white),
+        );
+      } else if (endDateTime.isBefore(selectedDateTime)) {
+        Get.snackbar(
+          "Error",
+          "La hora de finalización debe ser posterior a la hora de inicio",
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.redAccent,
+          colorText: Colors.white,
+          icon: Icon(Icons.warning_amber_rounded, color: Colors.white),
+        );
+      } else {
+        _addTaskToDb();
+        Get.back();
+        Get.snackbar(
+          "Listo",
+          "Tarea agregada exitosamente ",
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.greenAccent,
+          colorText: Colors.white,
+          icon: Icon(Icons.done, color: Colors.white),
+        );
+      }
     } else {
       Get.snackbar(
         "Requerido",
@@ -235,7 +262,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.redAccent,
         colorText: Colors.white,
-        icon: const Icon(Icons.warning_amber_rounded, color: Colors.white),
+        icon: Icon(Icons.warning_amber_rounded, color: Colors.white),
       );
     }
   }
