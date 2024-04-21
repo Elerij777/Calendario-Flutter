@@ -140,8 +140,7 @@ class _HomePageState extends State<HomePage> {
           color: Colors.grey,
         ),
         locale: 'es', // Establecer el idioma a español
-        onDateChange: (date) {
-        },
+        onDateChange: (date) {},
       ),
     );
   }
@@ -152,33 +151,48 @@ class _HomePageState extends State<HomePage> {
 
 //parte superior de la app
   _appBar() {
+    String _saludo() {
+      var hora = DateTime.now().hour;
+      if (hora >= 5 && hora < 12) {
+        return "¡Buenos días!";
+      } else if (hora >= 12 && hora < 18) {
+        return "¡Buenas tardes!";
+      } else {
+        return "¡Buenas noches!";
+      }
+    }
+
     return AppBar(
       elevation: 0,
       backgroundColor: context.theme.colorScheme.background,
       leading: GestureDetector(
         onTap: () {
-          //print("hola mundo");
           ThemeService().switchTheme();
           notifyHelper.displayNotification(
-            title: "Hola Mundo",
+            title: "¡Hola!",
             body: Get.isDarkMode
-                ? "Activado modo oscuro"
-                : "Activado modo blanco",
+                ? "Modo oscuro activado."
+                : "Modo claro activado.",
           );
         },
         child: Icon(
           Get.isDarkMode ? Icons.wb_sunny_outlined : Icons.nightlight_round,
           size: 20,
-          //color: Get.isDarkMode ? Colors.white:Colors.black
         ),
       ),
-      actions: const [
+      title: Text(
+        _saludo(),
+        style: TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+          color: Theme.of(context).textTheme.bodyText1?.color,
+        ),
+      ),
+      actions: [
         CircleAvatar(
           backgroundImage: AssetImage("assets/images/profile.jpg"),
         ),
-        SizedBox(
-          width: 20,
-        )
+        SizedBox(width: 20),
       ],
     );
   }

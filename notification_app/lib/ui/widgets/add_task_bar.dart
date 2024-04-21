@@ -213,20 +213,29 @@ class _AddTaskPageState extends State<AddTaskPage> {
   }
 
   _validate() {
-    if (_titleController.text.isNotEmpty && _noteControlles.text.isNotEmpty) {
+    if (_titleController.text.isNotEmpty &&
+        _noteControlles.text.isNotEmpty &&
+        _selectedDate != null &&
+        _starTime.isNotEmpty &&
+        _endTime.isNotEmpty) {
       _addTaskToDb();
-      // Acción a realizar si ambos campos están llenos, como agregar a la base de datos
-      Get.back(); // Regresar a la pantalla anterior después de la acción
+      Get.back();
+      Get.snackbar(
+        "Listo",
+        "Tarea agregada exitosamente ",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.greenAccent,
+        colorText: Colors.white,
+        icon: const Icon(Icons.done, color: Colors.white),
+      );
     } else {
-      // Si uno de los campos está vacío, mostrar un mensaje de advertencia
       Get.snackbar(
         "Requerido",
-        "El título y la nota son necesarios",
+        "Todos los campos son necesarios",
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.redAccent, // Cambio de color para indicar error
-        colorText: Colors.white, // Para mayor legibilidad
-        icon: const Icon(Icons.warning_amber_rounded,
-            color: Colors.white), // Icono de advertencia
+        backgroundColor: Colors.redAccent,
+        colorText: Colors.white,
+        icon: const Icon(Icons.warning_amber_rounded, color: Colors.white),
       );
     }
   }
