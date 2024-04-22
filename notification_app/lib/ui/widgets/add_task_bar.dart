@@ -52,19 +52,19 @@ class _AddTaskPageState extends State<AddTaskPage> {
               ),
               //Titulo
               MyInputField(
-                title: "Title",
-                hint: "Enter your Title",
+                title: "Titulo",
+                hint: "Ingrese un titulo",
                 controller: _titleController,
               ),
               //nota
               MyInputField(
-                title: "Note",
-                hint: "Enter your note",
+                title: "Nota",
+                hint: "Ingrese una descripcion",
                 controller: _noteControlles,
               ),
               //fecha
               MyInputField(
-                title: "Date",
+                title: "Fecha",
                 hint: DateFormat.yMd().format(_selectedDate),
                 widget: IconButton(
                   icon: const Icon(
@@ -79,7 +79,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
                 children: [
                   Expanded(
                     child: MyInputField(
-                      title: "Start Time",
+                      title: "Hora de inicio",
                       hint: _starTime,
                       widget: IconButton(
                         onPressed: () => _getTimeFromUser(isStartTime: true),
@@ -95,7 +95,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
                   ),
                   Expanded(
                     child: MyInputField(
-                      title: "End Time",
+                      title: "Hora de finalizacion",
                       hint: _endTime,
                       widget: IconButton(
                         onPressed: () => _getTimeFromUser(isStartTime: false),
@@ -281,7 +281,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
         isCompleted: 0,
       ),
     );
-    print("mi id es $value");
+    print("Mi id es $value");
   }
 
   _colorPallete() {

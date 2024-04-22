@@ -40,10 +40,12 @@ dependencies:
   intl:
   date_picker_timeline: ^1.0.0
   sqflite:
+  flutter_staggered_animations:
   google_fonts:
   flutter_local_notifications:
   flutter_localizations:
     sdk: flutter  
+  sqflite_common_ffi: ^2.3.2+1
 
   
 
