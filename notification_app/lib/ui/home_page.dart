@@ -2,10 +2,6 @@ import 'package:date_picker_timeline/date_picker_timeline.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_navigation/get_navigation.dart';
-import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
-import 'package:get/get_utils/get_utils.dart';
 import 'package:intl/intl.dart';
 import 'package:notification_app/controllers/task_controller.dart';
 import 'package:notification_app/models/task.dart';
@@ -19,7 +15,9 @@ import 'package:notification_app/ui/widgets/tasttile.dart';
 //import 'package:notification_app/ui/theme.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  final _taskController = Get.put(TaskControllers());
+
+  HomePage({super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -28,15 +26,14 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final _taskController = Get.put(TaskControllers());
   late final NotifyHelper notifyHelper;
-  
+  DateTime _selectedDate = DateTime.now();
   get subHeadingStyle => null;
-
 
   @override
   void initState() {
     super.initState();
     notifyHelper = NotifyHelper();
-
+    _taskController.getTasks();
     // Solicitar permisos de notificación para iOS y Android
     notifyHelper.requestIOSPermissions();
     notifyHelper.requestAndroidPermissions();
@@ -87,9 +84,9 @@ class _HomePageState extends State<HomePage> {
                       ),
                       CustomButton(
                         text: '+ Agregar Tarea',
-                        onTap: ()async{
+                        onTap: () async {
                           await Get.to(() => AddTaskPage());
-                        _taskController.getTasks();
+                          _taskController.getTasks();
                         },
                       ),
                     ],
@@ -98,7 +95,7 @@ class _HomePageState extends State<HomePage> {
               ),
             ],
           ),
-/*
+
 //2 calendario extenso
           Localizations.override(
             context: context,
@@ -109,134 +106,170 @@ class _HomePageState extends State<HomePage> {
                   initialDate: DateTime.now(),
                   firstDate: DateTime(1900),
                   lastDate: DateTime(2100),
-                  onDateChanged: (value) {},
+                  onDateChanged: (value) {
+                    _selectedDate = value;
+                    _taskController.getTasks();
+                  },
                 );
               },
             ),
           ),
-*/
+
           _addTaskBar(),
           _addDateBar(),
-          SizedBox(height: 10,),
+          SizedBox(
+            height: 10,
+          ),
           _showTasks(),
         ],
       ),
     );
   }
 
-  _showTasks(){
-return Expanded(
-child: Obx((){
-  return ListView.builder(itemCount: _taskController.taskList.length, itemBuilder: (_, index){
-    print(_taskController.taskList.length);
-      return AnimationConfiguration.staggeredList(
-        position: index, child: SlideAnimation(child: FadeInAnimation(child: Row(children: [
-          GestureDetector(
-            onTap: (){
-             _shotBottomSheet(context, _taskController.taskList[index]);
+  _showTasks() {
+    return Expanded(
+      child: Obx(() {
+        return ListView.builder(
+          itemCount: _taskController.taskList.length,
+          itemBuilder: (_, index) {
+            Task task = _taskController.taskList[index];
+            if (task.repeat == 'Daily') {
+              DateTime date = DateFormat.jm().parse(task.starTime.toString());
+              var myTime = DateFormat("HH:mm").format(date);
+              notifyHelper.scheduledNotification(
+                int.parse(myTime.toString().split(":")[0]),
+                int.parse(myTime.toString().split(":")[1]),
+                task,
+              );
 
-            },
-            child: TaskTile(_taskController.taskList[index]),
-          )
-        ],
-        )
-        ),
-        )
-);
-    
-
-  });
-})
-
-);
-
+              return AnimationConfiguration.staggeredList(
+                position: index,
+                child: SlideAnimation(
+                  child: FadeInAnimation(
+                    child: GestureDetector(
+                      onTap: () {
+                        _shotBottomSheet(context, task);
+                      },
+                      child: TaskTile(task),
+                    ),
+                  ),
+                ),
+              );
+            } else if (task.date == DateFormat.yMd().format(_selectedDate)) {
+              return AnimationConfiguration.staggeredList(
+                position: index,
+                child: SlideAnimation(
+                  child: FadeInAnimation(
+                    child: GestureDetector(
+                      onTap: () {
+                        _shotBottomSheet(context, task);
+                      },
+                      child: TaskTile(task),
+                    ),
+                  ),
+                ),
+              );
+            } else {
+              return Container();
+            }
+          },
+        );
+      }),
+    );
   }
 
-_shotBottomSheet(BuildContext context, Task task){
-Get.bottomSheet(
-Container(
-  padding: const EdgeInsets.only(top: 4),
-  height: task.isCompleted == 1? 
-  MediaQuery.of(context).size.height*0.24:
-  MediaQuery.of(context).size.height*0.32,
-  color:Get.isDarkMode? darkGreyClr:Colors.white,
-  child: Column(
-    children: [
+  _shotBottomSheet(BuildContext context, Task task) {
+    Get.bottomSheet(
       Container(
-        height: 6,
-        width: 120,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          color: Get.isDarkMode? Colors.grey[600]:Colors.grey[300],
+          padding: const EdgeInsets.only(top: 4),
+          height: task.isCompleted == 1
+              ? MediaQuery.of(context).size.height * 0.24
+              : MediaQuery.of(context).size.height * 0.32,
+          color: Get.isDarkMode ? darkGreyClr : Colors.white,
+          child: Column(children: [
+            Container(
+              height: 6,
+              width: 120,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: Get.isDarkMode ? Colors.grey[600] : Colors.grey[300],
+              ),
+            ),
+            Spacer(),
+            task.isCompleted == 1
+                ? Container()
+                : _bottomSheetButton(
+                    label: 'Tarea Completada',
+                    onTap: () {
+                      _taskController.markTaskCompleted(task.id!);
+                      Get.back();
+                    },
+                    clr: primaryClr,
+                    context: context,
+                  ),
+            SizedBox(
+              height: 20,
+            ),
+            _bottomSheetButton(
+              label: 'Borrar Tarea',
+              onTap: () {
+                _taskController.delete(task);
+                Get.back();
+              },
+              clr: Colors.red[300]!,
+              context: context,
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            _bottomSheetButton(
+              label: 'Cerrar',
+              onTap: () {
+                Get.back();
+              },
+              clr: Colors.red[300]!,
+              isClose: true,
+              context: context,
+            ),
+            SizedBox(
+              height: 10,
+            ),
+          ])),
+    );
+  }
 
-        ),
-      ),
-      Spacer(),
-      task.isCompleted == 1?
-      Container():
-      _bottomSheetButton(
-        label: 'Tarea Completada',
-        onTap: (){
-          Get.back();
-        },
-        clr:primaryClr,
-        context: context,
-      ),
-      SizedBox(height: 20,),
+  _bottomSheetButton(
+      {required label,
+      required Function() onTap,
+      required clr,
+      bool isClose = false,
+      required BuildContext context}) {
+    return GestureDetector(
+        onTap: onTap,
+        child: Container(
+            margin: const EdgeInsets.symmetric(vertical: 4),
+            height: 55,
+            width: MediaQuery.of(context).size.width * 0.9,
+            decoration: BoxDecoration(
+              border: Border.all(
+                  width: 2,
+                  color: isClose == true
+                      ? Get.isDarkMode
+                          ? Colors.grey[600]
+                          : Colors.grey[300]
+                      : clr),
+              borderRadius: BorderRadius.circular(20),
+              color: isClose == true ? Colors.teal : clr,
+            ),
+            child: Center(
+              child: Text(
+                label,
+                style: const TextStyle(
+                    color: Colors.white, fontWeight: FontWeight.bold),
+              ),
+            )));
+  }
 
-      _bottomSheetButton(
-        label: 'Borrar Tarea',
-        onTap: (){
-          Get.back();
-        },
-        clr:Colors.red[300]!,
-        context: context,
-      ),
-      SizedBox(height: 20,),
-      _bottomSheetButton(
-        label: 'Cerrar',
-        onTap: (){
-          Get.back();
-        },
-        clr:Colors.red[300]!,
-        isClose: true,
-        context: context,
-      ),
-       SizedBox(height: 10,),
-    ]
-  )
-),
-);
-
-}
-
-_bottomSheetButton({required label, required Function() onTap,  required clr, bool isClose=false, required BuildContext context})
-{
-return GestureDetector(
-     onTap:onTap,
-     child: Container(
-      margin: const EdgeInsets.symmetric(vertical: 4),
-      height: 55,
-      width: MediaQuery.of(context).size.width*0.9,
-      
-      decoration: BoxDecoration(
-        border: Border.all(
-          width: 2,
-          color:isClose==true?Get.isDarkMode?Colors.grey[600]:Colors.grey[300]:clr
-        ),
-        borderRadius: BorderRadius.circular(20),  
-        color:isClose==true?Colors.teal:clr,
-      ),
-
-      child: Center(
-        child: Text(label, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
-      )
-     )
-);
-
-
-
-}
 //calendario
   _addDateBar() {
     return Container(
@@ -267,14 +300,17 @@ return GestureDetector(
           color: Colors.grey,
         ),
         locale: 'es', // Establecer el idioma a español
-        onDateChange: (date) {},
+        onDateChange: (date) {
+          setState(() {
+            _selectedDate = date;
+          });
+        },
       ),
     );
   }
 
   _addTaskBar() {
     return Container();
-    
   }
 
 //parte superior de la app
@@ -288,9 +324,10 @@ return GestureDetector(
           notifyHelper.displayNotification(
             title: "¡Hola!",
             body: Get.isDarkMode
-                ? "Modo oscuro activado."
-                : "Modo claro activado.",
+                ? "Modo claro activado."
+                : "Modo oscuro activado.",
           );
+          //notifyHelper.scheduledNotification();
         },
         child: Icon(
           Get.isDarkMode ? Icons.wb_sunny_outlined : Icons.nightlight_round,

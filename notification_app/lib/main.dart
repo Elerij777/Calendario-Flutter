@@ -24,7 +24,7 @@ Future<void> main() async {
   // Inicialización de GetStorage
   WidgetsFlutterBinding.ensureInitialized();
   WidgetsFlutterBinding.ensureInitialized();
-  await DBHelper.initDB() ;
+  await DBHelper.initDB();
   await GetStorage.init();
   runApp(MyApp());
 }
@@ -36,7 +36,7 @@ class MyApp extends StatelessWidget {
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,       
+        GlobalCupertinoLocalizations.delegate,
       ],
       locale: const Locale('es'),
       supportedLocales: const [
@@ -49,7 +49,7 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
 
-      home: const HomePage(),
+      home: HomePage(),
     );
   }
 }

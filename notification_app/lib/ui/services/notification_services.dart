@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+//import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 import 'package:get/get.dart';
+import 'package:notification_app/models/task.dart';
+import 'package:notification_app/ui/notified_page.dart';
+import 'package:timezone/timezone.dart' as tz;
 
 class NotifyHelper {
   late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
@@ -10,6 +14,7 @@ class NotifyHelper {
   }
 
   Future<void> initializeNotification() async {
+    //_configureLocalTimeZone();
     final AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('appicon');
 
@@ -66,6 +71,8 @@ class NotifyHelper {
     required String title,
     required String body,
   }) async {
+    print('Pa saber que llega');
+
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
         AndroidNotificationDetails(
       'your channel id',
@@ -90,13 +97,49 @@ class NotifyHelper {
     );
   }
 
+  scheduledNotification(int hora, int min, Task task) async {
+    await flutterLocalNotificationsPlugin.zonedSchedule(
+        task.id!.toInt(),
+        task.title,
+        task.note,
+        _convertTime(hora, min),
+        androidAllowWhileIdle: true,
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.absoluteTime,
+        matchDateTimeComponents: DateTimeComponents.time,
+        payload: '${task.title}|${task.note}|',
+        const NotificationDetails(
+          android: AndroidNotificationDetails(
+            'your channel id',
+            'your channel name',
+            //'your channel description',
+          ),
+        ));
+  }
+
+  tz.TZDateTime _convertTime(int hora, int min) {
+    final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
+    tz.TZDateTime scheduledDate =
+        tz.TZDateTime(tz.local, now.year, now.month, now.day, hora, min);
+    if (scheduledDate.isBefore(now)) {
+      scheduledDate = scheduledDate.add(const Duration(days: 1));
+    }
+    return scheduledDate;
+  }
+
+  /*Future<void> _configureLocalTimeZone() async {
+    tz.initializeTimeZones();
+    final String timeZoneName = await FlutterNativeTimezone.getLocalTimezone();
+    tz.setLocalLocation(tz.getLocation(timeZoneName));
+  }*/
+
   Future selectNotification(String? payload) async {
     if (payload != null) {
       print('notification payload: $payload');
     } else {
       print("Notification Done");
     }
-    Get.to(() => Container(color: Colors.white));
+    Get.to(() => NotifiedPage(Label: payload));
     return Future.value();
   }
 

@@ -1,5 +1,3 @@
-
-
 import 'package:notification_app/models/task.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -36,19 +34,23 @@ class DBHelper {
 
   static Future<int> insert(Task? task) async {
     print("Insertar funcion");
-    return await _db?.insert(_tableName, task!.toJson())??1;
+    return await _db?.insert(_tableName, task!.toJson()) ?? 1;
   }
 
-static Future<List<Map<String, dynamic>>> query() async {
+  static Future<List<Map<String, dynamic>>> query() async {
     print("funcion llamada de consulta");
     return await _db!.query(_tableName);
   }
 
-static delete(Task task) async
-{
- return await _db!.delete(_tableName, where: 'id=?', whereArgs: [task.id]);
+  static delete(Task task) async {
+    return await _db!.delete(_tableName, where: 'id=?', whereArgs: [task.id]);
+  }
+
+  static update(int id) async {
+    return await _db!.rawUpdate('''
+    UPDATE tasks 
+    SET isCompleted = ?
+    WHERE id = ?
+    ''', [1, id]);
+  }
 }
-
-}
-
-
