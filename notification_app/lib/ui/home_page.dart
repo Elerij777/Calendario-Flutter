@@ -133,12 +133,9 @@ class _HomePageState extends State<HomePage> {
           itemCount: _taskController.taskList.length,
           itemBuilder: (_, index) {
             Task task = _taskController.taskList[index];
-            if (task.repeat == 'Daily') {
-          String startTime = task.starTime.toString(); 
-           List<String> timeComponents = startTime.split(":"); 
-           int hour = int.parse(timeComponents[0]); 
-           int minute = int.parse(timeComponents[1]); 
-           notifyHelper.scheduledNotification(hour, minute, task);
+            if (task.repeat == 'Diario') {
+          
+           notifyHelper.scheduledNotification(task);
 
               return AnimationConfiguration.staggeredList(
                 position: index,

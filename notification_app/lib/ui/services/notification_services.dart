@@ -97,7 +97,7 @@ class NotifyHelper {
     );
   }
 
-  scheduledNotification(int hora, int min, Task task) async {
+  /* scheduledNotification(int hora, int min, Task task) async {
     await flutterLocalNotificationsPlugin.zonedSchedule(
         task.id!.toInt(),
         task.title,
@@ -116,6 +116,26 @@ class NotifyHelper {
           ),
         ));
   }
+  */
+
+
+scheduledNotification(Task task) async {
+    await flutterLocalNotificationsPlugin.show(
+      task.id!.toInt(),
+      task.title,
+      task.note,
+      const NotificationDetails(
+        android: AndroidNotificationDetails(
+          'your channel id',
+          'your channel name',
+        ),
+      ),
+      payload: '${task.title}|${task.note}|',
+    );
+  }
+
+
+
 
   tz.TZDateTime _convertTime(int hora, int min) {
     final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
