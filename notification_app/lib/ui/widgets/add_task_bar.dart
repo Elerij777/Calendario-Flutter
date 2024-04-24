@@ -326,7 +326,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
     );
   }
 
-  _appBar(BuildContext context) {
+  AppBar _appBar(BuildContext context) {
     return AppBar(
       elevation: 0,
       backgroundColor: context.theme.colorScheme.background,
@@ -337,14 +337,70 @@ class _AddTaskPageState extends State<AddTaskPage> {
           size: 20,
         ),
       ),
-      actions: const [
-        CircleAvatar(
-          backgroundImage: AssetImage("assets/images/profile.jpg"),
+      actions: [
+        _taskMenuButton(),
+        const SizedBox(width: 20),
+      ],
+    );
+  }
+
+  Widget _taskMenuButton() {
+    return PopupMenuButton<int>(
+      itemBuilder: (context) => [
+        PopupMenuItem(
+          value: 1,
+          child: Row(
+            children: [
+              const Icon(
+                Icons.wb_sunny,
+                color: Colors.orange,
+              ),
+              const SizedBox(width: 10),
+              Text('Modo Oscuro'),
+            ],
+          ),
         ),
-        SizedBox(
-          width: 20,
+        PopupMenuItem(
+          value: 2,
+          child: Row(
+            children: [
+              const Icon(
+                Icons.task,
+                color: Colors.blue,
+              ),
+              const SizedBox(width: 10),
+              Text('Otra tarea'),
+            ],
+          ),
+        ),
+        PopupMenuItem(
+          value: 3,
+          child: Row(
+            children: [
+              const Icon(
+                Icons.task,
+                color: Colors.blue,
+              ),
+              const SizedBox(width: 10),
+              Text('Otra tarea más'),
+            ],
+          ),
         ),
       ],
+      onSelected: (value) {
+        switch (value) {
+          case 1:
+            // Lógica para activar el modo oscuro
+            break;
+          case 2:
+            // Lógica para otra tarea
+            break;
+          case 3:
+            // Lógica para otra tarea más
+            break;
+          default:
+        }
+      },
     );
   }
 

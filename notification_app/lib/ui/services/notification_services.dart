@@ -93,7 +93,7 @@ class NotifyHelper {
       title,
       body,
       platformChannelSpecifics,
-      payload: 'Default_',
+      payload: title,
     );
   }
 
@@ -139,8 +139,12 @@ class NotifyHelper {
     } else {
       print("Notification Done");
     }
-    Get.to(() => NotifiedPage(Label: payload));
-    return Future.value();
+    if (payload == '¡Hola!') {
+      print('Goku');
+    } else {
+      Get.to(() => NotifiedPage(Label: payload));
+      return Future.value();
+    }
   }
 
   Future onDidReceiveLocalNotification(

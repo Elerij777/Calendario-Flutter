@@ -43,7 +43,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: _appBar(),
+      appBar: _appBar(context),
       backgroundColor: context.theme.colorScheme.background,
       body: Column(
         children: [
@@ -314,7 +314,7 @@ class _HomePageState extends State<HomePage> {
   }
 
 //parte superior de la app
-  _appBar() {
+  /*_appBar() {
     return AppBar(
       elevation: 0,
       backgroundColor: context.theme.colorScheme.background,
@@ -348,6 +348,113 @@ class _HomePageState extends State<HomePage> {
         ),
         SizedBox(width: 20),
       ],
+    );
+  }*/
+
+  AppBar _appBar(BuildContext context) {
+    return AppBar(
+      elevation: 0,
+      backgroundColor: context.theme.colorScheme.background,
+      leading: _profileAvatar(), // Colocar la foto de perfil como leading
+      actions: [
+        _taskMenuButton(),
+        const SizedBox(width: 20),
+      ],
+      title: Text(
+        _saludo(),
+        style: TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+          color: Theme.of(context).textTheme.bodyText1?.color,
+        ),
+      ),
+    );
+  }
+
+  Widget _taskMenuButton() {
+    bool isDarkMode = Get.isDarkMode;
+
+    return PopupMenuButton<int>(
+      itemBuilder: (context) => [
+        PopupMenuItem(
+          value: 1,
+          child: GestureDetector(
+            onTap: () {
+              ThemeService().switchTheme();
+              notifyHelper.displayNotification(
+                title: "¡Hola!",
+                body: isDarkMode
+                    ? "Modo claro activado."
+                    : "Modo oscuro activado.",
+              );
+            },
+            child: Row(
+              children: [
+                Icon(
+                  isDarkMode ? Icons.wb_sunny_outlined : Icons.nightlight_round,
+                  size: 20,
+                ),
+                const SizedBox(width: 10),
+                Text(isDarkMode ? 'Modo Claro' : 'Modo Oscuro'),
+              ],
+            ),
+          ),
+        ),
+        PopupMenuItem(
+          value: 2,
+          child: Row(
+            children: [
+              Icon(
+                Icons.equalizer,
+                color: Colors.blue,
+              ),
+              const SizedBox(width: 10),
+              Text('Ver Estadisticas'),
+            ],
+          ),
+        ),
+        PopupMenuItem(
+          value: 3,
+          child: Row(
+            children: [
+              Icon(
+                Icons.calendar_month,
+                color: Colors.blue,
+              ),
+              const SizedBox(width: 10),
+              Text('Cambiar Tipo de calendario'),
+            ],
+          ),
+        ),
+      ],
+      onSelected: (value) {
+        switch (value) {
+          case 1:
+            ThemeService().switchTheme();
+            notifyHelper.displayNotification(
+              title: "¡Hola!",
+              body:
+                  isDarkMode ? "Modo claro activado." : "Modo oscuro activado.",
+            );
+            break;
+          case 2:
+            // Lógica para otra tarea
+            break;
+          case 3:
+            // Lógica para otra tarea más
+            break;
+          default:
+        }
+      },
+    );
+  }
+
+  Widget _profileAvatar() {
+    return CircleAvatar(
+      backgroundImage: AssetImage("assets/images/profile.jpg"),
+    );
+    SizedBox(
+      width: 15,
     );
   }
 
