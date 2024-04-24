@@ -118,7 +118,7 @@ class NotifyHelper {
   }
   */
 
-
+/*
 scheduledNotification(Task task) async {
     await flutterLocalNotificationsPlugin.show(
       task.id!.toInt(),
@@ -133,7 +133,22 @@ scheduledNotification(Task task) async {
       payload: '${task.title}|${task.note}|',
     );
   }
+*/
 
+scheduledNotification(Task task, String startTime) async {
+  await flutterLocalNotificationsPlugin.show(
+    task.id!.toInt(),
+    task.title,
+    task.note,
+    const NotificationDetails(
+      android: AndroidNotificationDetails(
+        'your channel id',
+        'your channel name',
+      ),
+    ),
+    payload: '${task.title}|${task.note}|',
+  );
+}
 
 
 
