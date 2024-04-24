@@ -18,6 +18,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
   final TaskControllers _taskController = Get.put(TaskControllers());
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _noteControlles = TextEditingController();
+  String _selectedType = 'Estudios';
   DateTime _selectedDate = DateTime.now();
   // Configura el tiempo actual y agrega una hora para el tiempo de finalización predeterminado
   String _endTime = DateFormat("HH:mm").format(
@@ -62,6 +63,26 @@ class _AddTaskPageState extends State<AddTaskPage> {
                 hint: "Ingrese una descripcion",
                 controller: _noteControlles,
               ),
+              //Tipo
+              MyInputField(
+  title: "Tipo de Tarea",
+  hint: _selectedType,
+  widget: DropdownButton<String>(
+    value: _selectedType,
+    onChanged: (String? newValue) {
+      setState(() {
+        _selectedType = newValue ?? _selectedType;
+      });
+    },
+    items: <String>['Estudios', 'Trabajo', 'Salud', 'Personal']
+        .map<DropdownMenuItem<String>>((String value) {
+      return DropdownMenuItem<String>(
+        value: value,
+        child: Text(value),
+      );
+    }).toList(),
+  ),
+),
               //fecha
               MyInputField(
                 title: "Fecha",
@@ -272,6 +293,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
       task: Task(
         title: _titleController.text,
         note: _noteControlles.text,
+        tipo: _selectedType,
         date: DateFormat.yMd().format(_selectedDate),
         starTime: _starTime,
         endTime: _endTime,
@@ -435,6 +457,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
       });
     }
   }
+  
 
   Future<TimeOfDay?> _showTimePicker() {
     return showTimePicker(

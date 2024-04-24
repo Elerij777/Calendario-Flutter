@@ -8,6 +8,7 @@ import 'package:notification_app/models/task.dart';
 import 'package:notification_app/ui/services/notification_services.dart';
 import 'package:notification_app/ui/services/theme_services.dart';
 import 'package:notification_app/ui/theme.dart';
+import 'package:notification_app/ui/widgets/Estadistics.dart';
 import 'package:notification_app/ui/widgets/add_task_bar.dart';
 import 'package:notification_app/ui/widgets/custome_buttom.dart';
 import 'package:notification_app/ui/widgets/tasttile.dart';
@@ -24,6 +25,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  bool showExtendedCalendar = true;
   final _taskController = Get.put(TaskControllers());
   late final NotifyHelper notifyHelper;
   DateTime _selectedDate = DateTime.now();
@@ -96,27 +98,8 @@ class _HomePageState extends State<HomePage> {
             ],
           ),
 
-//2 calendario extenso
-          Localizations.override(
-            context: context,
-            locale: const Locale('es'),
-            child: Builder(
-              builder: (context) {
-                return CalendarDatePicker(
-                  initialDate: DateTime.now(),
-                  firstDate: DateTime(1900),
-                  lastDate: DateTime(2100),
-                  onDateChanged: (value) {
-                    _selectedDate = value;
-                    _taskController.getTasks();
-                  },
-                );
-              },
-            ),
-          ),
-
+          _buildCalendar(),
           _addTaskBar(),
-          _addDateBar(),
           SizedBox(
             height: 10,
           ),
@@ -437,10 +420,15 @@ class _HomePageState extends State<HomePage> {
             );
             break;
           case 2:
-            // Lógica para otra tarea
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => EstadisticaScreen()),
+            );
             break;
           case 3:
-            // Lógica para otra tarea más
+          setState(() {
+        showExtendedCalendar = !showExtendedCalendar;
+      });
             break;
           default:
         }
@@ -467,4 +455,41 @@ class _HomePageState extends State<HomePage> {
       return "¡Buenas noches!";
     }
   }
+
+Widget _buildExtendedCalendar() {
+    return Localizations.override(
+            context: context,
+            locale: const Locale('es'),
+            child: Builder(
+              builder: (context) {
+                return CalendarDatePicker(
+                  initialDate: DateTime.now(),
+                  firstDate: DateTime(1900),
+                  lastDate: DateTime(2100),
+                  onDateChanged: (value) {
+                    _selectedDate = value;
+                    _taskController.getTasks();
+                  },
+                );
+              },
+            ),
+          );
+  }
+
+  
+  Widget _buildSmallCalendar() {
+    return _addDateBar();
+  }
+
+Widget _buildCalendar() {
+  if (showExtendedCalendar) {
+    return _buildExtendedCalendar();
+  } else {
+    return _buildSmallCalendar();
+  }
+}
+
+
+
+
 }
