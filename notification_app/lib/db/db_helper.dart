@@ -37,6 +37,12 @@ class DBHelper {
     return await _db?.insert(_tableName, task!.toJson()) ?? 1;
   }
 
+  static Future<List<Task>> queryTasks() async {
+    final List<Map<String, dynamic>> tasksMapList =
+        await _db!.query(_tableName);
+    return tasksMapList.map((taskMap) => Task.fromJson(taskMap)).toList();
+  }
+
   static Future<List<Map<String, dynamic>>> query() async {
     print("funcion llamada de consulta");
     return await _db!.query(_tableName);
