@@ -226,6 +226,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
                   ),
                 ],
               ),
+             SizedBox(height: 20),
             ],
           ),
         ),

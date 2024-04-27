@@ -6,7 +6,10 @@ import 'package:notification_app/db/db_helper.dart';
 import 'package:notification_app/models/task.dart';
 
 class EstadisticaScreen extends StatefulWidget {
+  const EstadisticaScreen({super.key});
+
   @override
+  // ignore: library_private_types_in_public_api
   _EstadisticaScreenState createState() => _EstadisticaScreenState();
 }
 
@@ -27,6 +30,183 @@ class _EstadisticaScreenState extends State<EstadisticaScreen> {
   List<String> _weekLabels = [];
   List<int> _timeSpentData = [];
 
+  void _showChart(String chartName) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        if (chartName == 'completedTasks') {
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text('Estadísticas de tareas completas'),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: SizedBox(
+                  width: 200,
+                  height: 210,
+                  child: CustomPaint(
+                    size: const Size(200, 200),
+                    painter: PieChartPainter(
+                      percentages: [
+                        _completedTasks /
+                            (_completedTasks + _incompleteTasks),
+                        _incompleteTasks /
+                            (_completedTasks + _incompleteTasks),
+                      ],
+                      colors: [Colors.green, Colors.red],
+                    ),
+                  ),
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  _buildLegend(
+                      "Incompletas ${(_incompleteTasks / (_completedTasks + _incompleteTasks) * 100).toStringAsFixed(1)}%",
+                      Colors.red),
+                  _buildLegend(
+                      'Completadas ${(_completedTasks / (_completedTasks + _incompleteTasks) * 100).toStringAsFixed(1)}%',
+                      Colors.green),
+                ],
+              ),
+            ],
+          );
+        } else if (chartName == 'taskTypes') {
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text('Tareas completadas por tipo'),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: SizedBox(
+                  width: 200,
+                  height: 210,
+                  child: CustomPaint(
+                    size: const Size(200, 200),
+                    painter: PieChartPainter(
+                      percentages: [
+                        _estudiosTasks / _completedTasks,
+                        _trabajoTasks / _completedTasks,
+                        _saludTasks / _completedTasks,
+                        _personalTasks / _completedTasks,
+                      ],
+                      colors: [
+                        Colors.blue,
+                        Colors.orange,
+                        Colors.red,
+                        Colors.purple,
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              Column(children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    _buildLegend(
+                        'Estudios ${(_estudiosTasks / _completedTasks * 100).toStringAsFixed(1)}%',
+                        Colors.blue),
+                    _buildLegend(
+                        'Trabajo ${(_trabajoTasks / _completedTasks * 100).toStringAsFixed(1)}%',
+                        Colors.orange),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    _buildLegend(
+                        'Salud ${(_saludTasks / _completedTasks * 100).toStringAsFixed(1)}%',
+                        Colors.red),
+                    _buildLegend(
+                        'Personal ${(_personalTasks / _completedTasks * 100).toStringAsFixed(1)}%',
+                        Colors.purple),
+                  ],
+                )
+              ]),
+            ],
+          );
+        } else if (chartName == 'lastFiveWeeks') {
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text('Últimas 5 semanas'),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: SizedBox(
+                  width: 200,
+                  height: 210,
+                  child: CustomPaint(
+                    size: const Size(200, 200),
+                    painter: PieChartPainter(
+                      percentages: [
+                        _semana1Minutos / tiempototal5semanas,
+                        _semana2Minutos / tiempototal5semanas,
+                        _semana3Minutos / tiempototal5semanas,
+                        _semana4Minutos / tiempototal5semanas,
+                        _semana5Minutos / tiempototal5semanas,
+                      ],
+                      colors: [
+                        Colors.blue,
+                        Colors.orange,
+                        Colors.red,
+                        Colors.purple,
+                        Colors.green,
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              Column(children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    _buildLegend(
+                      'Semana 1: ${_semana1Minutos.toStringAsFixed(2)} minutos',
+                      Colors.blue,
+                    )
+                  ],
+                ),
+                const SizedBox(height: 10),
+                Row(
+                  children: [
+                    _buildLegend(
+                        'Semana 2: ${_semana2Minutos.toStringAsFixed(2)} minutos',
+                        Colors.orange),
+                  ],
+                ),
+                Row(
+                  children: [
+                    _buildLegend(
+                        'Semana 3: ${_semana3Minutos.toStringAsFixed(2)} minutos',
+                        Colors.red),
+                  ],
+                ),
+                Row(
+                  children: [
+                    _buildLegend(
+                        'Semana 4: ${_semana4Minutos.toStringAsFixed(2)} minutos',
+                        Colors.purple),
+                  ],
+                ),
+                Row(
+                  children: [
+                    _buildLegend(
+                        'Semana 5: ${_semana5Minutos.toStringAsFixed(2)} minutos',
+                        Colors.green),
+                  ],
+                )
+              ]),const SizedBox(height: 10),
+            ],
+          );
+        } else {
+          return const SizedBox.shrink();
+        }
+      },
+    );
+  }
+
   @override
   void initState() {
     super.initState();
@@ -40,7 +220,7 @@ class _EstadisticaScreenState extends State<EstadisticaScreen> {
 
   Future<void> _loadTimeSpentLastFiveWeeks() async {
     DateTime currentDate = DateTime.now();
-    DateTime fiveWeeksAgo = currentDate.subtract(Duration(days: 5 * 7));
+    DateTime fiveWeeksAgo = currentDate.subtract(const Duration(days: 5 * 7));
 
     List<Task> tasks = await DBHelper.queryTasks();
     double semana1Minutos = 0.0;
@@ -60,11 +240,11 @@ class _EstadisticaScreenState extends State<EstadisticaScreen> {
 
         if (taskWeek.isAtSameMomentAs(currentDate)) {
           semana1Minutos += taskDuration;
-        } else if (taskWeek.add(Duration(days: 7)).isAfter(currentDate)) {
+        } else if (taskWeek.add(const Duration(days: 7)).isAfter(currentDate)) {
           semana2Minutos += taskDuration;
-        } else if (taskWeek.add(Duration(days: 14)).isAfter(currentDate)) {
+        } else if (taskWeek.add(const Duration(days: 14)).isAfter(currentDate)) {
           semana3Minutos += taskDuration;
-        } else if (taskWeek.add(Duration(days: 21)).isAfter(currentDate)) {
+        } else if (taskWeek.add(const Duration(days: 21)).isAfter(currentDate)) {
           semana4Minutos += taskDuration;
         } else {
           semana5Minutos += taskDuration;
@@ -144,220 +324,6 @@ class _EstadisticaScreenState extends State<EstadisticaScreen> {
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Estadísticas'),
-      ),
-      body: SingleChildScrollView(
-        child: Center(
-          child: _completedTasks == 0 && _incompleteTasks == 0
-              ? CircularProgressIndicator()
-              : Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(children: [
-                    Card(
-                      elevation: 4,
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          ListTile(
-                            title: Text('Estadísticas de tareas completas'),
-                          ),
-                          Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 16.0),
-                            child: SizedBox(
-                              width: 200,
-                              height: 210,
-                              child: CustomPaint(
-                                size: Size(200, 200),
-                                painter: PieChartPainter(
-                                  percentages: [
-                                    _completedTasks /
-                                        (_completedTasks + _incompleteTasks),
-                                    _incompleteTasks /
-                                        (_completedTasks + _incompleteTasks),
-                                  ],
-                                  colors: [Colors.green, Colors.red],
-                                ),
-                              ),
-                            ),
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              _buildLegend(
-                                  "Incompletas ${(_incompleteTasks / (_completedTasks + _incompleteTasks) * 100).toStringAsFixed(1)}%",
-                                  Colors.red),
-                              _buildLegend(
-                                  'Completadas ${(_completedTasks / (_completedTasks + _incompleteTasks) * 100).toStringAsFixed(1)}%',
-                                  Colors.green),
-                            ],
-                          ),
-                          Container(
-                            height: 10,
-                          )
-                        ],
-                      ),
-                    ),
-
-                    SizedBox(height: 20), // Espacio entre las dos tarjetas
-                    Card(
-                      elevation: 4,
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          ListTile(
-                            title: Text('Tareas completadas por tipo'),
-                          ),
-                          Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 16.0),
-                            child: SizedBox(
-                              width: 200,
-                              height: 210,
-                              child: CustomPaint(
-                                size: Size(200, 200),
-                                painter: PieChartPainter(
-                                  percentages: [
-                                    _estudiosTasks / _completedTasks,
-                                    _trabajoTasks / _completedTasks,
-                                    _saludTasks / _completedTasks,
-                                    _personalTasks / _completedTasks,
-                                  ],
-                                  colors: [
-                                    Colors.blue,
-                                    Colors.orange,
-                                    Colors.red,
-                                    Colors.purple,
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                          Column(children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                _buildLegend(
-                                    'Estudios ${(_estudiosTasks / _completedTasks * 100).toStringAsFixed(1)}%',
-                                    Colors.blue),
-                                _buildLegend(
-                                    'Trabajo ${(_trabajoTasks / _completedTasks * 100).toStringAsFixed(1)}%',
-                                    Colors.orange),
-                              ],
-                            ),
-                            SizedBox(height: 10),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                _buildLegend(
-                                    'Salud ${(_saludTasks / _completedTasks * 100).toStringAsFixed(1)}%',
-                                    Colors.red),
-                                _buildLegend(
-                                    'Personal ${(_personalTasks / _completedTasks * 100).toStringAsFixed(1)}%',
-                                    Colors.purple),
-                              ],
-                            )
-                          ]),
-                          Container(
-                            height: 10,
-                          )
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: 20),
-                    Card(
-                      elevation: 4,
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          ListTile(
-                            title: Text('Ultimas 5 semanas'),
-                          ),
-                          Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 16.0),
-                            child: SizedBox(
-                              width: 200,
-                              height: 210,
-                              child: CustomPaint(
-                                size: Size(200, 200),
-                                painter: PieChartPainter(
-                                  percentages: [
-                                    _semana1Minutos / tiempototal5semanas,
-                                    _semana2Minutos / tiempototal5semanas,
-                                    _semana3Minutos / tiempototal5semanas,
-                                    _semana4Minutos / tiempototal5semanas,
-                                    _semana5Minutos / tiempototal5semanas,
-                                  ],
-                                  colors: [
-                                    Colors.blue,
-                                    Colors.orange,
-                                    Colors.red,
-                                    Colors.purple,
-                                    Colors.green,
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                          Column(children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                _buildLegend(
-                                  'Semana 1: ${_semana1Minutos.toStringAsFixed(2)} minutos',
-                                  Colors.blue,
-                                )
-                              ],
-                            ),
-                            SizedBox(height: 10),
-                            Row(
-                              children: [
-                                _buildLegend(
-                                    'Semana 2: ${_semana2Minutos.toStringAsFixed(2)} minutos',
-                                    Colors.orange),
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                _buildLegend(
-                                    'Semana 3: ${_semana3Minutos.toStringAsFixed(2)} minutos',
-                                    Colors.red),
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                _buildLegend(
-                                    'Semana 4: ${_semana4Minutos.toStringAsFixed(2)} minutos',
-                                    Colors.purple),
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                _buildLegend(
-                                    'Semana 5: ${_semana5Minutos.toStringAsFixed(2)} minutos',
-                                    Colors.green),
-                              ],
-                            )
-                          ]),
-                          SizedBox(height: 10),
-                          Container(
-                            height: 10,
-                          )
-                        ],
-                      ),
-                    ),
-                  ]),
-                ),
-        ),
-      ),
-    );
-  }
-
   Widget _buildLegend(String text, Color color) {
     return Row(
       children: [
@@ -366,15 +332,86 @@ class _EstadisticaScreenState extends State<EstadisticaScreen> {
           height: 20,
           color: color,
         ),
-        SizedBox(width: 8),
+        const SizedBox(width: 8),
         Text(text),
       ],
     );
   }
+
+@override
+Widget build(BuildContext context) {
+  return Scaffold(
+    appBar: AppBar(
+      title: const Text('Estadísticas'),
+    ),
+    body: SingleChildScrollView(
+      reverse: true,
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _buildButton(
+                  context,
+                  'Tareas completadas',
+                  Colors.green,
+                  () {
+                    _showChart('completedTasks');
+                  },
+                ),
+                _buildButton(
+                  context,
+                  'Últimas 5 semanas',
+                  Colors.purple,
+                  () {
+                    _showChart('lastFiveWeeks');
+                  },
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _buildButton(
+                  context,
+                  'Tareas completadas por tipo',
+                  Colors.blue,
+                  () {
+                    _showChart('taskTypes');
+                  },
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
+}
+
+Widget _buildButton(BuildContext context, String text, Color color, Function onPressed) {
+  return ElevatedButton(
+    onPressed: () => onPressed(),
+    style: ElevatedButton.styleFrom(
+      foregroundColor: Colors.white, backgroundColor: color,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+      ),
+      padding: const EdgeInsets.symmetric(
+        horizontal: 25,
+        vertical: 60,
+      ),
+    ),
+    child: Text(text),
+  );
+}
 }
 
 class PieChartPainter extends CustomPainter {
-  final List<double> percentages;
+final List<double> percentages;
   final List<Color> colors;
 
   PieChartPainter({
@@ -409,68 +446,3 @@ class PieChartPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
-
-
-
-
-
-/*
-import 'package:flutter/material.dart';
-import 'package:notification_app/db/db_helper.dart';
-import 'package:notification_app/models/task.dart';
-
-
-class EstadisticaScreen extends StatefulWidget {
-  @override
-  _EstadisticaScreenState createState() => _EstadisticaScreenState();
-}
-
-class _EstadisticaScreenState extends State<EstadisticaScreen> {
-  int _completedTasks = 0;
-  int _incompleteTasks = 0;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadTasks();
-  }
-
-  void _loadTasks() async {
-    List<Task> tasks = await DBHelper.queryTasks();
-    int completedCount = tasks.where((task) => task.isCompleted == 1).length;
-    int incompleteCount = tasks.length - completedCount;
-    setState(() {
-      _completedTasks = completedCount;
-      _incompleteTasks = incompleteCount;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Estadísticas'),
-      ),
-      body: Center(
-        child: _completedTasks == 0 && _incompleteTasks == 0
-            ? CircularProgressIndicator()
-            : PieChart(
-                data: [
-                  PieChartSectionData(
-                    value: _completedTasks.toDouble(),
-                    title: 'Completadas',
-                    color: Colors.green,
-                  ),
-                  PieChartSectionData(
-                    value: _incompleteTasks.toDouble(),
-                    title: 'Incompletas',
-                    color: Colors.red,
-                  ),
-                ],
-                legendPosition: LegendPosition.bottom,
-                legendTextStyle: TextStyle(color: Colors.black),
-              ),
-      ),
-    );
-  }
-}*/
