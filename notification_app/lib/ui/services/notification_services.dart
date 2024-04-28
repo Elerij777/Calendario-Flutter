@@ -190,4 +190,53 @@ scheduledNotification(Task task, String startTime) async {
   ) async {
     Get.dialog(const Text("Hola Mundo"));
   }
+
+
+ Future<void> scheduledNotification2(Task task, String starTime) async {
+  final timeComponents = starTime.split(':');
+  final int hour = int.parse(timeComponents[0]);
+  final int minute = int.parse(timeComponents[1]);
+
+  // Convertir la hora y el minuto a segundos
+  final int scheduledTimeInSeconds = (hour * 3600) + (minute * 60);
+
+  // Obtener la hora actual en segundos desde la medianoche
+  final DateTime now = DateTime.now();
+  final int currentTimeInSeconds = (now.hour * 3600) + (now.minute * 60) + now.second;
+
+  // Calcular la diferencia en segundos entre la hora programada y la hora actual
+  int differenceInSeconds = scheduledTimeInSeconds - currentTimeInSeconds;
+  if (differenceInSeconds < 0) {
+    // Si la hora programada ya pasó hoy, sumar un día
+    differenceInSeconds += 24 * 3600; // 24 horas en segundos
+  }
+
+  // Convertir la diferencia en segundos a una duración
+  final Duration difference = Duration(seconds: differenceInSeconds);
+
+  // Calcular la hora de la notificación
+  final notificationTime = now.add(difference);
+
+  // Programar la notificación
+  await flutterLocalNotificationsPlugin.zonedSchedule(
+    task.id!.toInt(),
+    task.title,
+    task.note,
+    tz.TZDateTime.from(notificationTime, tz.local),
+    const NotificationDetails(
+      android: AndroidNotificationDetails(
+        'your channel id',
+        'your channel name',
+      ),
+    ),
+    androidAllowWhileIdle: true,
+    uiLocalNotificationDateInterpretation:
+        UILocalNotificationDateInterpretation.absoluteTime,
+    matchDateTimeComponents: DateTimeComponents.time,
+    payload: '${task.title}|${task.note}|',
+  );
+}
+
+
+
 }

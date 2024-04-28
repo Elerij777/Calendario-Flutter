@@ -118,11 +118,11 @@ class _HomePageState extends State<HomePage> {
             Task task = _taskController.taskList[index];
             if (task.repeat == 'Diario') {
           
-            final currentTime = DateTime.now();
-            final startTime = task.starTime != null ? DateFormat("HH:mm").parse(task.starTime!) : DateTime(2000, 1, 1);
-            if (currentTime.hour == startTime.hour && currentTime.minute == startTime.minute) {
-              notifyHelper.scheduledNotification(task, task.starTime!);
-            }
+           // final currentTime = DateTime.now();
+           // final startTime = task.starTime != null ? DateFormat("HH:mm").parse(task.starTime!) : DateTime(2000, 1, 1);
+            //if (currentTime.hour == startTime.hour && currentTime.minute == startTime.minute) {
+             // notifyHelper.scheduledNotification2(task, task.starTime!);
+            //}
 
               return AnimationConfiguration.staggeredList(
                 position: index,
