@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 //import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:notification_app/models/task.dart';
 import 'package:notification_app/ui/notified_page.dart';
 import 'package:timezone/timezone.dart' as tz;
+import "dart:async";
 
 class NotifyHelper {
   late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
@@ -149,6 +151,20 @@ scheduledNotification(Task task, String startTime) async {
     payload: '${task.title}|${task.note}|',
   );
 }
+
+scheduleNotificationForTask(Task task, String startTime) async {
+  
+     final NotifyHelper notifyHelper = NotifyHelper();
+     Timer.periodic(Duration(minutes: 1), (timer) {
+ final currentTime = DateTime.now();
+            final startTime = task.starTime != null ? DateFormat("HH:mm").parse(task.starTime!) : DateTime(2000, 1, 1);
+            if (currentTime.hour == startTime.hour && currentTime.minute == startTime.minute) {
+             notifyHelper.scheduledNotification(task, task.starTime);
+            }
+
+      });
+}
+
 
 
 
