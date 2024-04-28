@@ -1,3 +1,4 @@
+import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -305,7 +306,32 @@ class _AddTaskPageState extends State<AddTaskPage> {
       ),
     );
     print("Mi id es $value");
+    _scheduleAlarm();
   }
+
+_scheduleAlarm() async {
+  // Calcular la hora actual y agregar 5 minutos
+  DateTime alarmTime = DateTime.now().add(Duration(minutes: 1));
+
+  // Calcular la diferencia de tiempo entre ahora y la hora de la alarma
+  int timeInSeconds = alarmTime.difference(DateTime.now()).inSeconds;
+
+  // Programar la alarma con android_alarm_manager
+  await AndroidAlarmManager.oneShot(
+    Duration(seconds: timeInSeconds), // Tiempo absoluto hasta la alarma
+    0, // ID único para la alarma
+    _alarmCallback, // Método que se ejecutará cuando suene la alarma
+    wakeup: true,
+     // Indica si la alarma debe despertar al dispositivo del modo de suspensión
+  );
+}
+
+
+void _alarmCallback() {
+  print('¡Alarma activada!');
+}
+
+
 
   _colorPallete() {
     return Column(
