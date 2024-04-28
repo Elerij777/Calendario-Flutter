@@ -66,24 +66,24 @@ class _AddTaskPageState extends State<AddTaskPage> {
               ),
               //Tipo
               MyInputField(
-  title: "Tipo de Tarea",
-  hint: _selectedType,
-  widget: DropdownButton<String>(
-    value: _selectedType,
-    onChanged: (String? newValue) {
-      setState(() {
-        _selectedType = newValue ?? _selectedType;
-      });
-    },
-    items: <String>['Estudios', 'Trabajo', 'Salud', 'Personal']
-        .map<DropdownMenuItem<String>>((String value) {
-      return DropdownMenuItem<String>(
-        value: value,
-        child: Text(value),
-      );
-    }).toList(),
-  ),
-),
+                title: "Tipo de Tarea",
+                hint: _selectedType,
+                widget: DropdownButton<String>(
+                  value: _selectedType,
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      _selectedType = newValue ?? _selectedType;
+                    });
+                  },
+                  items: <String>['Estudios', 'Trabajo', 'Salud', 'Personal']
+                      .map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                ),
+              ),
               //fecha
               MyInputField(
                 title: "Fecha",
@@ -227,7 +227,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
                   ),
                 ],
               ),
-             SizedBox(height: 20),
+              SizedBox(height: 20),
             ],
           ),
         ),
@@ -248,7 +248,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
         _noteControlles.text.isNotEmpty &&
         _starTime.isNotEmpty &&
         _endTime.isNotEmpty) {
-      if (selectedDateTime.isBefore(now)) {
+      /* if (selectedDateTime.isBefore(now)) {
         Get.snackbar(
           "Error",
           "La fecha y hora de inicio deben ser posteriores a la fecha y hora actual",
@@ -257,7 +257,8 @@ class _AddTaskPageState extends State<AddTaskPage> {
           colorText: Colors.white,
           icon: Icon(Icons.warning_amber_rounded, color: Colors.white),
         );
-      } else if (endDateTime.isBefore(selectedDateTime)) {
+      } else 
+      if (endDateTime.isBefore(selectedDateTime)) {
         Get.snackbar(
           "Error",
           "La hora de finalización debe ser posterior a la hora de inicio",
@@ -266,7 +267,8 @@ class _AddTaskPageState extends State<AddTaskPage> {
           colorText: Colors.white,
           icon: Icon(Icons.warning_amber_rounded, color: Colors.white),
         );
-      } else {
+      } else*/
+      {
         _addTaskToDb();
         Get.back();
         Get.snackbar(
@@ -309,29 +311,26 @@ class _AddTaskPageState extends State<AddTaskPage> {
     _scheduleAlarm();
   }
 
-_scheduleAlarm() async {
-  // Calcular la hora actual y agregar 5 minutos
-  DateTime alarmTime = DateTime.now().add(Duration(minutes: 1));
+  _scheduleAlarm() async {
+    // Calcular la hora actual y agregar 5 minutos
+    DateTime alarmTime = DateTime.now().add(Duration(minutes: 1));
 
-  // Calcular la diferencia de tiempo entre ahora y la hora de la alarma
-  int timeInSeconds = alarmTime.difference(DateTime.now()).inSeconds;
+    // Calcular la diferencia de tiempo entre ahora y la hora de la alarma
+    int timeInSeconds = alarmTime.difference(DateTime.now()).inSeconds;
 
-  // Programar la alarma con android_alarm_manager
-  await AndroidAlarmManager.oneShot(
-    Duration(seconds: timeInSeconds), // Tiempo absoluto hasta la alarma
-    0, // ID único para la alarma
-    _alarmCallback, // Método que se ejecutará cuando suene la alarma
-    wakeup: true,
-     // Indica si la alarma debe despertar al dispositivo del modo de suspensión
-  );
-}
+    // Programar la alarma con android_alarm_manager
+    await AndroidAlarmManager.oneShot(
+      Duration(seconds: timeInSeconds), // Tiempo absoluto hasta la alarma
+      0, // ID único para la alarma
+      _alarmCallback, // Método que se ejecutará cuando suene la alarma
+      wakeup: true,
+      // Indica si la alarma debe despertar al dispositivo del modo de suspensión
+    );
+  }
 
-
-void _alarmCallback() {
-  print('¡Alarma activada!');
-}
-
-
+  void _alarmCallback() {
+    print('¡Alarma activada!');
+  }
 
   _colorPallete() {
     return Column(
@@ -484,7 +483,6 @@ void _alarmCallback() {
       });
     }
   }
-  
 
   Future<TimeOfDay?> _showTimePicker() {
     return showTimePicker(

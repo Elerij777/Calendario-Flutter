@@ -26,9 +26,13 @@ class _EstadisticaScreenState extends State<EstadisticaScreen> {
   double _semana4Minutos = 0.0;
   double _semana5Minutos = 0.0;
   late double tiempototal5semanas = 0.0;
-
-  List<String> _weekLabels = [];
-  List<int> _timeSpentData = [];
+  double _week1Minutes = 0.0;
+  double _week2Minutes = 0.0;
+  double _week3Minutes = 0.0;
+  double _week4Minutes = 0.0;
+  double _week5Minutes = 0.0;
+  double _week6Minutes = 0.0;
+  double totalSixWeeksTime = 0.0;
 
   void _showChart(String chartName) {
     showModalBottomSheet(
@@ -48,10 +52,8 @@ class _EstadisticaScreenState extends State<EstadisticaScreen> {
                     size: const Size(200, 200),
                     painter: PieChartPainter(
                       percentages: [
-                        _completedTasks /
-                            (_completedTasks + _incompleteTasks),
-                        _incompleteTasks /
-                            (_completedTasks + _incompleteTasks),
+                        _completedTasks / (_completedTasks + _incompleteTasks),
+                        _incompleteTasks / (_completedTasks + _incompleteTasks),
                       ],
                       colors: [Colors.green, Colors.red],
                     ),
@@ -159,14 +161,9 @@ class _EstadisticaScreenState extends State<EstadisticaScreen> {
                 ),
               ),
               Column(children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    _buildLegend(
-                      'Semana 1: ${_semana1Minutos.toStringAsFixed(2)} minutos',
-                      Colors.blue,
-                    )
-                  ],
+                _buildLegend(
+                  'Semana 1: ${_semana1Minutos.toStringAsFixed(2)} minutos',
+                  Colors.blue,
                 ),
                 const SizedBox(height: 10),
                 Row(
@@ -176,6 +173,7 @@ class _EstadisticaScreenState extends State<EstadisticaScreen> {
                         Colors.orange),
                   ],
                 ),
+                const SizedBox(height: 10),
                 Row(
                   children: [
                     _buildLegend(
@@ -183,6 +181,7 @@ class _EstadisticaScreenState extends State<EstadisticaScreen> {
                         Colors.red),
                   ],
                 ),
+                const SizedBox(height: 10),
                 Row(
                   children: [
                     _buildLegend(
@@ -190,6 +189,7 @@ class _EstadisticaScreenState extends State<EstadisticaScreen> {
                         Colors.purple),
                   ],
                 ),
+                const SizedBox(height: 10),
                 Row(
                   children: [
                     _buildLegend(
@@ -197,9 +197,66 @@ class _EstadisticaScreenState extends State<EstadisticaScreen> {
                         Colors.green),
                   ],
                 )
-              ]),const SizedBox(height: 10),
+              ]),
+              const SizedBox(height: 10),
             ],
           );
+        } else if (chartName == 'nextSixWeeks') {
+          return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+            const Text('Proximas 6 semanas'),
+            Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: SizedBox(
+                    width: 200,
+                    height: 210,
+                    child: CustomPaint(
+                        size: const Size(200, 200),
+                        painter: PieChartPainter(percentages: [
+                          _week1Minutes / totalSixWeeksTime,
+                          _week2Minutes / totalSixWeeksTime,
+                          _week3Minutes / totalSixWeeksTime,
+                          _week4Minutes / totalSixWeeksTime,
+                          _week5Minutes / totalSixWeeksTime,
+                          _week6Minutes / totalSixWeeksTime,
+                        ], colors: [
+                          Colors.blue,
+                          Colors.orange,
+                          Colors.red,
+                          Colors.purple,
+                          Colors.green,
+                          Colors.yellow,
+                        ])))),
+            _buildLegend(
+              'Semana 1: ${_week1Minutes.toStringAsFixed(2)} minutos',
+              Colors.blue,
+            ),
+            const SizedBox(height: 10),
+            _buildLegend(
+              'Semana 2: ${_week2Minutes.toStringAsFixed(2)} minutos',
+              Colors.orange,
+            ),
+            const SizedBox(height: 10),
+            _buildLegend(
+              'Semana 3: ${_week3Minutes.toStringAsFixed(2)} minutos',
+              Colors.red,
+            ),
+            const SizedBox(height: 10),
+            _buildLegend(
+              'Semana 4: ${_week4Minutes.toStringAsFixed(2)} minutos',
+              Colors.purple,
+            ),
+            const SizedBox(height: 10),
+            _buildLegend(
+              'Semana 5: ${_week5Minutes.toStringAsFixed(2)} minutos',
+              Colors.green,
+            ),
+            const SizedBox(height: 10),
+            _buildLegend(
+              'Semana 6: ${_week6Minutes.toStringAsFixed(2)} minutos',
+              Colors.yellow,
+            ),
+            const SizedBox(height: 10),
+          ]);
         } else {
           return const SizedBox.shrink();
         }
@@ -216,6 +273,70 @@ class _EstadisticaScreenState extends State<EstadisticaScreen> {
   void _loadTasks() async {
     _loadCompletedTaskStats();
     await _loadTimeSpentLastFiveWeeks();
+    _loadTimeSpentNextSixWeeks();
+  }
+
+  Future<void> _loadTimeSpentNextSixWeeks() async {
+    DateTime currentDate = DateTime.now();
+    DateTime sixWeeksLater = currentDate.add(const Duration(days: 6 * 7));
+
+    List<Task> tasks = await DBHelper.queryTasks();
+    double week1Minutes = 0.0;
+    double week2Minutes = 0.0;
+    double week3Minutes = 0.0;
+    double week4Minutes = 0.0;
+    double week5Minutes = 0.0;
+    double week6Minutes = 0.0;
+
+    tasks.forEach((task) {
+      String formattedDate =
+          '${task.date.split('/')[2]}-${task.date.split('/')[0].padLeft(2, '0')}-${task.date.split('/')[1].padLeft(2, '0')}';
+      DateTime endTime = DateTime.parse("$formattedDate ${task.endTime}");
+
+      if (endTime.isBefore(sixWeeksLater)) {
+        DateTime taskWeek = _getStartOfWeek(endTime);
+        int taskDuration = _calculateTaskDuration(task);
+
+        if (taskWeek.add(const Duration(days: 7)).isAfter(currentDate)) {
+          week1Minutes += taskDuration;
+        } else if (taskWeek
+            .add(const Duration(days: 14))
+            .isAfter(currentDate)) {
+          week2Minutes += taskDuration;
+        } else if (taskWeek
+            .add(const Duration(days: 21))
+            .isAfter(currentDate)) {
+          week3Minutes += taskDuration;
+        } else if (taskWeek
+            .add(const Duration(days: 28))
+            .isAfter(currentDate)) {
+          week4Minutes += taskDuration;
+        } else if (taskWeek
+            .add(const Duration(days: 35))
+            .isAfter(currentDate)) {
+          week5Minutes += taskDuration;
+        } else if (taskWeek
+            .add(const Duration(days: 42))
+            .isAfter(currentDate)) {
+          week6Minutes += taskDuration;
+        }
+      }
+    });
+
+    setState(() {
+      _week1Minutes = week1Minutes;
+      _week2Minutes = week2Minutes;
+      _week3Minutes = week3Minutes;
+      _week4Minutes = week4Minutes;
+      _week5Minutes = week5Minutes;
+      _week6Minutes = week6Minutes;
+      totalSixWeeksTime = week1Minutes +
+          week2Minutes +
+          week3Minutes +
+          week4Minutes +
+          week5Minutes +
+          week6Minutes;
+    });
   }
 
   Future<void> _loadTimeSpentLastFiveWeeks() async {
@@ -238,13 +359,19 @@ class _EstadisticaScreenState extends State<EstadisticaScreen> {
         DateTime taskWeek = _getStartOfWeek(endTime);
         int taskDuration = _calculateTaskDuration(task);
 
-        if (taskWeek.isAtSameMomentAs(currentDate)) {
+        if (taskWeek.add(const Duration(days: 7)).isAfter(currentDate)) {
           semana1Minutos += taskDuration;
-        } else if (taskWeek.add(const Duration(days: 7)).isAfter(currentDate)) {
+        } else if (taskWeek
+            .add(const Duration(days: 14))
+            .isAfter(currentDate)) {
           semana2Minutos += taskDuration;
-        } else if (taskWeek.add(const Duration(days: 14)).isAfter(currentDate)) {
+        } else if (taskWeek
+            .add(const Duration(days: 21))
+            .isAfter(currentDate)) {
           semana3Minutos += taskDuration;
-        } else if (taskWeek.add(const Duration(days: 21)).isAfter(currentDate)) {
+        } else if (taskWeek
+            .add(const Duration(days: 28))
+            .isAfter(currentDate)) {
           semana4Minutos += taskDuration;
         } else {
           semana5Minutos += taskDuration;
@@ -338,80 +465,88 @@ class _EstadisticaScreenState extends State<EstadisticaScreen> {
     );
   }
 
-@override
-Widget build(BuildContext context) {
-  return Scaffold(
-    appBar: AppBar(
-      title: const Text('Estadísticas'),
-    ),
-    body: SingleChildScrollView(
-      reverse: true,
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                _buildButton(
-                  context,
-                  'Tareas completadas',
-                  Colors.green,
-                  () {
-                    _showChart('completedTasks');
-                  },
-                ),
-                _buildButton(
-                  context,
-                  'Últimas 5 semanas',
-                  Colors.purple,
-                  () {
-                    _showChart('lastFiveWeeks');
-                  },
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                _buildButton(
-                  context,
-                  'Tareas completadas por tipo',
-                  Colors.blue,
-                  () {
-                    _showChart('taskTypes');
-                  },
-                ),
-              ],
-            ),
-          ],
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Estadísticas'),
+      ),
+      body: SingleChildScrollView(
+        reverse: true,
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  _buildButton(
+                    context,
+                    'Tareas completadas',
+                    Colors.green,
+                    () {
+                      _showChart('completedTasks');
+                    },
+                  ),
+                  _buildButton(
+                    context,
+                    'Últimas 5 semanas',
+                    Colors.purple,
+                    () {
+                      _showChart('lastFiveWeeks');
+                    },
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  _buildButton(
+                    context,
+                    'Tareas completadas por tipo',
+                    Colors.blue,
+                    () {
+                      _showChart('taskTypes');
+                    },
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+                _buildButton(context, 'Procimas 6 semanas', Colors.orange, () {
+                  _showChart('nextSixWeeks');
+                })
+              ])
+            ],
+          ),
         ),
       ),
-    ),
-  );
-}
+    );
+  }
 
-Widget _buildButton(BuildContext context, String text, Color color, Function onPressed) {
-  return ElevatedButton(
-    onPressed: () => onPressed(),
-    style: ElevatedButton.styleFrom(
-      foregroundColor: Colors.white, backgroundColor: color,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
+  Widget _buildButton(
+      BuildContext context, String text, Color color, Function onPressed) {
+    return ElevatedButton(
+      onPressed: () => onPressed(),
+      style: ElevatedButton.styleFrom(
+        foregroundColor: Colors.white,
+        backgroundColor: color,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        padding: const EdgeInsets.symmetric(
+          horizontal: 25,
+          vertical: 60,
+        ),
       ),
-      padding: const EdgeInsets.symmetric(
-        horizontal: 25,
-        vertical: 60,
-      ),
-    ),
-    child: Text(text),
-  );
-}
+      child: Text(text),
+    );
+  }
 }
 
 class PieChartPainter extends CustomPainter {
-final List<double> percentages;
+  final List<double> percentages;
   final List<Color> colors;
 
   PieChartPainter({
