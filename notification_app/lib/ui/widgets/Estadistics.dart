@@ -1,4 +1,3 @@
-// ignore: file_names
 import 'dart:core';
 import 'dart:math';
 
@@ -49,7 +48,7 @@ class _EstadisticaScreenState extends State<EstadisticaScreen> {
   }
 
   Future<void> _loadTimeSpentNextSixWeeks() async {
-    //print('La fecha actual es: $fechaActual');
+    print('La fecha actual es: $fechaActual');
 
     List<Task> tasks = await DBHelper.queryTasks();
     double week1Minutes = 0.0;
@@ -60,14 +59,13 @@ class _EstadisticaScreenState extends State<EstadisticaScreen> {
     double week6Minutes = 0.0;
 
     tasks.forEach((task) {
-      /*
       print(task.date +
           ' y ' +
           fechaActual +
           ' y ' +
           obtenerFechaIncrementada(fechaActual, 1));
       print('la fecha es: ' + obtenerFechaIncrementada(fechaActual, 0));
-*/
+
       if (task.date == obtenerFechaIncrementada(fechaActual, 0) ||
           task.date == obtenerFechaIncrementada(fechaActual, 1) ||
           task.date == obtenerFechaIncrementada(fechaActual, 2) ||
@@ -81,7 +79,7 @@ class _EstadisticaScreenState extends State<EstadisticaScreen> {
           int.parse(task.starTime.split(':')[0]),
           int.parse(task.starTime.split(':')[1]),
         );
-        //print('llego al primer if');
+        print('llego al primer if');
       } else if (task.date == obtenerFechaIncrementada(fechaActual, 7) ||
           task.date == obtenerFechaIncrementada(fechaActual, 8) ||
           task.date == obtenerFechaIncrementada(fechaActual, 9) ||
@@ -95,7 +93,7 @@ class _EstadisticaScreenState extends State<EstadisticaScreen> {
           int.parse(task.starTime.split(':')[0]),
           int.parse(task.starTime.split(':')[1]),
         );
-        //print('llego al segundo if');
+        print('llego al segundo if');
       } else if (task.date == obtenerFechaIncrementada(fechaActual, 14) ||
           task.date == obtenerFechaIncrementada(fechaActual, 15) ||
           task.date == obtenerFechaIncrementada(fechaActual, 16) ||
@@ -109,7 +107,7 @@ class _EstadisticaScreenState extends State<EstadisticaScreen> {
           int.parse(task.starTime.split(':')[0]),
           int.parse(task.starTime.split(':')[1]),
         );
-        //print('llego al tercer if');
+        print('llego al tercer if');
       } else if (task.date == obtenerFechaIncrementada(fechaActual, 21) ||
           task.date == obtenerFechaIncrementada(fechaActual, 22) ||
           task.date == obtenerFechaIncrementada(fechaActual, 23) ||
@@ -123,7 +121,7 @@ class _EstadisticaScreenState extends State<EstadisticaScreen> {
           int.parse(task.starTime.split(':')[0]),
           int.parse(task.starTime.split(':')[1]),
         );
-        //print('llego al cuarto if');
+        print('llego al cuarto if');
       } else if (task.date == obtenerFechaIncrementada(fechaActual, 28) ||
           task.date == obtenerFechaIncrementada(fechaActual, 29) ||
           task.date == obtenerFechaIncrementada(fechaActual, 30) ||
@@ -137,7 +135,7 @@ class _EstadisticaScreenState extends State<EstadisticaScreen> {
           int.parse(task.starTime.split(':')[0]),
           int.parse(task.starTime.split(':')[1]),
         );
-        //print('llego al quinto if');
+        print('llego al quinto if');
       } else if (task.date == obtenerFechaIncrementada(fechaActual, 35) ||
           task.date == obtenerFechaIncrementada(fechaActual, 36) ||
           task.date == obtenerFechaIncrementada(fechaActual, 37) ||
@@ -151,7 +149,7 @@ class _EstadisticaScreenState extends State<EstadisticaScreen> {
           int.parse(task.starTime.split(':')[0]),
           int.parse(task.starTime.split(':')[1]),
         );
-        //print('llego al sexto if');
+        print('llego al sexto if');
       }
     });
 
@@ -173,15 +171,15 @@ class _EstadisticaScreenState extends State<EstadisticaScreen> {
 
   int calcularDistanciaEnMinutos(
       int hora1, int minuto1, int hora2, int minuto2) {
-    //print("hora1: $hora1, minuto1: $minuto1, hora2: $hora2, minuto2: $minuto2");
+    print("hora1: $hora1, minuto1: $minuto1, hora2: $hora2, minuto2: $minuto2");
     // Convierte cada hora a minutos
     int minutos1 = hora1 * 60 + minuto1;
     int minutos2 = hora2 * 60 + minuto2;
-    //print("minutos1: $minutos1, minutos2: $minutos2");
+    print("minutos1: $minutos1, minutos2: $minutos2");
 
     // Calcula la diferencia en minutos
     int distanciaEnMinutos = (minutos2 - minutos1).abs();
-    //("Distancia en minutos: $distanciaEnMinutos");
+    print("Distancia en minutos: $distanciaEnMinutos");
 
     return distanciaEnMinutos;
   }
@@ -377,67 +375,66 @@ class _EstadisticaScreenState extends State<EstadisticaScreen> {
       ],
     );
   }
-@override
-Widget build(BuildContext context) {
-  return Scaffold(
-    appBar: AppBar(
-      title: const Text('Estadísticas'),
-    ),
-    body: SingleChildScrollView(
-      reverse: true,
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                _buildButton(
-                  context,
-                  'Tareas completadas',
-                  Colors.green,
-                  () {
-                    _showChart('completedTasks');
-                  },
-                ),
-                _buildButton(
-                  context,
-                  'Últimas 5 semanas',
-                  Colors.purple,
-                  () {
-                    _showChart('lastFiveWeeks');
-                  },
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                _buildButton(
-                  context,
-                  'Tareas por tipo',
-                  Colors.blue,
-                  () {
-                    _showChart('taskTypes');
-                  },
-                ),
-                _buildButton(
-                  context,
-                  'Próximas 6 semanas',
-                  Colors.orange,
-                  () {
-                    _showChart('nextSixWeeks');
-                  },
-                ),
-              ],
-            ),
-          ],
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Estadísticas'),
+      ),
+      body: SingleChildScrollView(
+        reverse: true,
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  _buildButton(
+                    context,
+                    'Tareas completadas',
+                    Colors.green,
+                    () {
+                      _showChart('completedTasks');
+                    },
+                  ),
+                  _buildButton(
+                    context,
+                    'Últimas 5 semanas',
+                    Colors.purple,
+                    () {
+                      _showChart('lastFiveWeeks');
+                    },
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  _buildButton(
+                    context,
+                    'Tareas completadas por tipo',
+                    Colors.blue,
+                    () {
+                      _showChart('taskTypes');
+                    },
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+                _buildButton(context, 'Proximas 6 semanas', Colors.orange, () {
+                  _showChart('nextSixWeeks');
+                })
+              ])
+            ],
+          ),
         ),
       ),
-    ),
-  );
-}
+    );
+  }
 
   Widget _buildButton(
       BuildContext context, String text, Color color, Function onPressed) {

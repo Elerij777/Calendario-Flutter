@@ -8,16 +8,28 @@ import 'package:notification_app/ui/services/theme_services.dart';
 import 'package:notification_app/ui/theme.dart';
 
 Future<void> main() async {
+  // Configuración regional predeterminada
+  /*
+  final languageCode = ui.window.locale.languageCode;
+  final countryCode = ui.window.locale.countryCode;
+
+  String defaultLocale = languageCode ?? '';
+  if (countryCode != null) {
+    defaultLocale += '_$countryCode';
+  }
+
+  Intl.defaultLocale = defaultLocale;
+  */
+
+  // Inicialización de GetStorage
   WidgetsFlutterBinding.ensureInitialized();
   WidgetsFlutterBinding.ensureInitialized();
   await DBHelper.initDB();
   await GetStorage.init();
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
@@ -37,7 +49,7 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
 
-      home: const HomePage(),
+      home: HomePage(),
     );
   }
 }

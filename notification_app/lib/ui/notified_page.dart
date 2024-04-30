@@ -16,7 +16,7 @@ class NotifiedPage extends StatelessWidget {
           color: Get.isDarkMode ? Colors.white : Colors.grey[600],
         ),
         title: Text(Label.toString().split('|')[0],
-            style: const TextStyle(
+            style: TextStyle(
               color: Colors.black,
             )),
       ),
@@ -30,7 +30,7 @@ class NotifiedPage extends StatelessWidget {
           ),
           child: Text(
             Label.toString().split('|')[1],
-            style: const TextStyle(
+            style: TextStyle(
               color: Colors.black,
             ),
           ),
