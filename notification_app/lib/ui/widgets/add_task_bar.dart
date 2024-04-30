@@ -64,26 +64,50 @@ class _AddTaskPageState extends State<AddTaskPage> {
                 hint: "Ingrese una descripcion",
                 controller: _noteControlles,
               ),
-              //Tipo
-              MyInputField(
-                title: "Tipo de Tarea",
-                hint: _selectedType,
-                widget: DropdownButton<String>(
-                  value: _selectedType,
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      _selectedType = newValue ?? _selectedType;
-                    });
-                  },
-                  items: <String>['Estudios', 'Trabajo', 'Salud', 'Personal']
-                      .map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                ),
-              ),
+            // Tipo de tarea
+MyInputField(
+  title: "Tipo de Tarea",
+  hint: _selectedType,
+  widget: DropdownButton<String>(
+    icon: Icon(
+      Icons.keyboard_arrow_down,
+      color: Theme.of(context).brightness == Brightness.dark
+          ? Colors.white
+          : Colors.black,
+    ),
+    iconSize: 32,
+    elevation: 4,
+    style: TextStyle(
+      fontSize: 20.0,
+      fontWeight: FontWeight.normal,
+      fontFamily: 'Lato',
+      color: Theme.of(context).brightness == Brightness.dark
+          ? Colors.white
+          : Colors.black,
+    ),
+    underline: Container(height: 0),
+    onChanged: (String? newValue) {
+      setState(() {
+        _selectedType = newValue ?? _selectedType;
+      });
+    },
+    items: <String>['Estudios', 'Trabajo', 'Salud', 'Personal']
+        .map<DropdownMenuItem<String>>((String value) {
+      return DropdownMenuItem<String>(
+        value: value,
+        child: Text(
+          value,
+          style: TextStyle(
+            color: Theme.of(context).brightness == Brightness.dark
+                ? Colors.white
+                : Colors.black,
+          ),
+        ),
+      );
+    }).toList(),
+  ),
+),
+
               //fecha
               MyInputField(
                 title: "Fecha",
@@ -307,7 +331,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
         isCompleted: 0,
       ),
     );
-    print("Mi id es $value");
+    //print("Mi id es $value");
     _scheduleAlarm();
   }
 
@@ -329,7 +353,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
   }
 
   void _alarmCallback() {
-    print('¡Alarma activada!');
+    //print('¡Alarma activada!');
   }
 
   _colorPallete() {
@@ -385,13 +409,15 @@ class _AddTaskPageState extends State<AddTaskPage> {
           size: 20,
         ),
       ),
+/*
       actions: [
         _taskMenuButton(),
         const SizedBox(width: 20),
       ],
+      */
     );
   }
-
+/*
   Widget _taskMenuButton() {
     return PopupMenuButton<int>(
       itemBuilder: (context) => [
@@ -449,9 +475,10 @@ class _AddTaskPageState extends State<AddTaskPage> {
           default:
         }
       },
+      
     );
   }
-
+*/
   _getDateFromUser() async {
     DateTime? _pickerDate = await showDatePicker(
         context: context,
@@ -463,7 +490,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
         _selectedDate = _pickerDate;
       });
     } else {
-      print("no válido");
+     // print("no válido");
     }
   }
 
@@ -471,7 +498,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
     TimeOfDay? pickedTime = await _showTimePicker();
 
     if (pickedTime == null) {
-      print("Tiempo cancelado");
+      //print("Tiempo cancelado");
     } else {
       String _formattedTime = pickedTime.format(context);
       setState(() {

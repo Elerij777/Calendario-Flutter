@@ -73,7 +73,7 @@ class NotifyHelper {
     required String title,
     required String body,
   }) async {
-    print('Pa saber que llega');
+   // print('Pa saber que llega');
 
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
         AndroidNotificationDetails(
@@ -98,44 +98,6 @@ class NotifyHelper {
       payload: title,
     );
   }
-
-  /* scheduledNotification(int hora, int min, Task task) async {
-    await flutterLocalNotificationsPlugin.zonedSchedule(
-        task.id!.toInt(),
-        task.title,
-        task.note,
-        _convertTime(hora, min),
-        androidAllowWhileIdle: true,
-        uiLocalNotificationDateInterpretation:
-            UILocalNotificationDateInterpretation.absoluteTime,
-        matchDateTimeComponents: DateTimeComponents.time,
-        payload: '${task.title}|${task.note}|',
-        const NotificationDetails(
-          android: AndroidNotificationDetails(
-            'your channel id',
-            'your channel name',
-            //'your channel description',
-          ),
-        ));
-  }
-  */
-
-/*
-scheduledNotification(Task task) async {
-    await flutterLocalNotificationsPlugin.show(
-      task.id!.toInt(),
-      task.title,
-      task.note,
-      const NotificationDetails(
-        android: AndroidNotificationDetails(
-          'your channel id',
-          'your channel name',
-        ),
-      ),
-      payload: '${task.title}|${task.note}|',
-    );
-  }
-*/
 
 scheduledNotification(Task task, String startTime) async {
   await flutterLocalNotificationsPlugin.show(
@@ -178,20 +140,16 @@ scheduleNotificationForTask(Task task, String startTime) async {
     return scheduledDate;
   }
 
-  /*Future<void> _configureLocalTimeZone() async {
-    tz.initializeTimeZones();
-    final String timeZoneName = await FlutterNativeTimezone.getLocalTimezone();
-    tz.setLocalLocation(tz.getLocation(timeZoneName));
-  }*/
+
 
   Future selectNotification(String? payload) async {
     if (payload != null) {
-      print('notification payload: $payload');
+      //print('notification payload: $payload');
     } else {
-      print("Notification Done");
+      //print("Notification Done");
     }
     if (payload == '¡Hola!') {
-      print('Goku');
+      //print('Goku');
     } else {
       Get.to(() => NotifiedPage(Label: payload));
       return Future.value();

@@ -15,7 +15,7 @@ class DBHelper {
         _path,
         version: _version,
         onCreate: (db, version) {
-          print("creating a new one");
+          //print("creating a new one");
           return db.execute(
             "CREATE TABLE $_tableName("
             "id INTEGER PRIMARY KEY AUTOINCREMENT,"
@@ -33,7 +33,7 @@ class DBHelper {
   }
 
   static Future<int> insert(Task? task) async {
-    print("Insertar funcion");
+    //print("Insertar funcion");
     return await _db?.insert(_tableName, task!.toJson()) ?? 1;
   }
 

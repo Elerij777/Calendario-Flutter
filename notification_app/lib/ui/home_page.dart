@@ -16,9 +16,8 @@ import 'package:notification_app/ui/widgets/tasttile.dart';
 //import 'package:notification_app/ui/theme.dart';
 
 class HomePage extends StatefulWidget {
-  final _taskController = Get.put(TaskControllers());
 
-  HomePage({super.key});
+  const HomePage({super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -100,7 +99,7 @@ class _HomePageState extends State<HomePage> {
 
           _buildCalendar(),
           _addTaskBar(),
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           _showTasks(),
@@ -174,7 +173,7 @@ class _HomePageState extends State<HomePage> {
                 color: Get.isDarkMode ? Colors.grey[600] : Colors.grey[300],
               ),
             ),
-            Spacer(),
+            const Spacer(),
             task.isCompleted == 1
                 ? Container()
                 : _bottomSheetButton(
@@ -186,7 +185,7 @@ class _HomePageState extends State<HomePage> {
                     clr: primaryClr,
                     context: context,
                   ),
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
             _bottomSheetButton(
@@ -198,7 +197,7 @@ class _HomePageState extends State<HomePage> {
               clr: Colors.red[300]!,
               context: context,
             ),
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
             _bottomSheetButton(
@@ -210,7 +209,7 @@ class _HomePageState extends State<HomePage> {
               isClose: true,
               context: context,
             ),
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
           ])),
@@ -292,44 +291,6 @@ class _HomePageState extends State<HomePage> {
     return Container();
   }
 
-//parte superior de la app
-  /*_appBar() {
-    return AppBar(
-      elevation: 0,
-      backgroundColor: context.theme.colorScheme.background,
-      leading: GestureDetector(
-        onTap: () {
-          ThemeService().switchTheme();
-          notifyHelper.displayNotification(
-            title: "¡Hola!",
-            body: Get.isDarkMode
-                ? "Modo claro activado."
-                : "Modo oscuro activado.",
-          );
-          //notifyHelper.scheduledNotification();
-        },
-        child: Icon(
-          Get.isDarkMode ? Icons.wb_sunny_outlined : Icons.nightlight_round,
-          size: 20,
-        ),
-      ),
-      title: Text(
-        _saludo(),
-        style: TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.bold,
-          color: Theme.of(context).textTheme.bodyText1?.color,
-        ),
-      ),
-      actions: [
-        CircleAvatar(
-          backgroundImage: AssetImage("assets/images/profile.jpg"),
-        ),
-        SizedBox(width: 20),
-      ],
-    );
-  }*/
-
   AppBar _appBar(BuildContext context) {
     return AppBar(
       elevation: 0,
@@ -379,7 +340,7 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
         ),
-        PopupMenuItem(
+        const PopupMenuItem(
           value: 2,
           child: Row(
             children: [
@@ -387,12 +348,12 @@ class _HomePageState extends State<HomePage> {
                 Icons.equalizer,
                 color: Colors.blue,
               ),
-              const SizedBox(width: 10),
+              SizedBox(width: 10),
               Text('Ver Estadisticas'),
             ],
           ),
         ),
-        PopupMenuItem(
+        const PopupMenuItem(
           value: 3,
           child: Row(
             children: [
@@ -400,7 +361,7 @@ class _HomePageState extends State<HomePage> {
                 Icons.calendar_month,
                 color: Colors.blue,
               ),
-              const SizedBox(width: 10),
+              SizedBox(width: 10),
               Text('Cambiar Tipo de calendario'),
             ],
           ),
@@ -434,11 +395,8 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _profileAvatar() {
-    return CircleAvatar(
+    return const CircleAvatar(
       backgroundImage: AssetImage("assets/images/profile.jpg"),
-    );
-    SizedBox(
-      width: 15,
     );
   }
 

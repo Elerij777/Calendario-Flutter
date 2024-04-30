@@ -1,21 +1,20 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../../models/task.dart';
 import '../theme.dart';
 
 class TaskTile extends StatelessWidget {
   final Task? task;
-  TaskTile(this.task);
+  const TaskTile(this.task, {super.key});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding:
-      EdgeInsets.symmetric(horizontal: 20),
+      const EdgeInsets.symmetric(horizontal: 20),
       width: MediaQuery.of(context).size.width,
-      margin: EdgeInsets.only(bottom: 12),
+      margin: const EdgeInsets.only(bottom: 12),
       child: Container(
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         //  width: SizeConfig.screenWidth * 0.78,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
@@ -28,14 +27,14 @@ class TaskTile extends StatelessWidget {
               children: [
                 Text(
                   task?.title??"",
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
                     fontFamily: 'Lato',
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 12,
                 ),
                 Row(
@@ -46,7 +45,7 @@ class TaskTile extends StatelessWidget {
                       color: Colors.grey[200],
                       size: 18,
                     ),
-                    SizedBox(width: 4),
+                    const SizedBox(width: 4),
                     Text(
                       "${task!.starTime} - ${task!.endTime}",
                       style: TextStyle(
@@ -57,7 +56,7 @@ class TaskTile extends StatelessWidget {
                     ),
                   ],
                 ),
-                SizedBox(height: 12),
+                const SizedBox(height: 12),
                 Text(
                   task?.note??"",
                   style: TextStyle(
@@ -70,7 +69,7 @@ class TaskTile extends StatelessWidget {
             ),
           ),
           Container(
-            margin: EdgeInsets.symmetric(horizontal: 10),
+            margin: const EdgeInsets.symmetric(horizontal: 10),
             height: 60,
             width: 0.5,
             color: Colors.grey[200]!.withOpacity(0.7),
@@ -79,7 +78,7 @@ class TaskTile extends StatelessWidget {
             quarterTurns: 3,
             child: Text(
               task!.isCompleted == 1 ? "COMPLETADA" : "INCOMPLETA",
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 10,
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
